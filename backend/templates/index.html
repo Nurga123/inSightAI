@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Indrive AI Backend</title>
+    <style>
+        body { font-family: Arial; margin: 30px; }
+        h1 { color: #333; }
+        .section { margin-bottom: 20px; }
+        button { padding: 6px 12px; cursor: pointer; }
+        input { padding: 5px; width: 300px; }
+        pre { background: #f4f4f4; padding: 10px; }
+    </style>
+</head>
+<body>
+    <h1>Indrive AI Backend</h1>
+
+    <div class="section">
+        <h2>Пользователи</h2>
+        <button onclick="getUsers()">Показать пользователей</button>
+        <pre id="users-output"></pre>
+    </div>
+
+    <div class="section">
+        <h2>Машины</h2>
+        <button onclick="getCars()">Показать машины</button>
+        <pre id="cars-output"></pre>
+    </div>
+
+    <div class="section">
+        <h2>Детекция машины</h2>
+        <input type="text" id="image_url" placeholder="Введите URL изображения"/>
+        <button onclick="detectCar()">Детектировать</button>
+        <pre id="detect-output"></pre>
+    </div>
+
+    <script>
+        async function getUsers() {
+            const res = await fetch('/users/');
+            const data = await res.json();
+            document.getElementById('users-output').textContent = JSON.stringify(data, null, 2);
+        }
+
+        async function getCars() {
+            const res = await fetch('/cars/');
+            const data = await res.json();
+            document.getElementById('cars-output').textContent = JSON.stringify(data, null, 2);
+        }
+
+        async function detectCar() {
+            const url = document.getElementById('image_url').value;
+            const res = await fetch('/cars/detect', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ image_url: url })
+            });
+            const data = await res.json();
+            document.getElementById('detect-output').textContent = JSON.stringify(data, null, 2);
+        }
+    </script>
+</body>
+</html>
