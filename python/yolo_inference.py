@@ -1,46 +1,29 @@
-from ultralytics import YOLO
 import os
-import shutil
+from ultralytics import YOLO
+import cv2
+import numpy as np
+import base64
 
-# Загружаем модель один раз при старте
-model = YOLO("models/weights/best.pt")  # путь к твоей модели
+# Путь к модели относительно корня проекта
+model_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "models/weights/best.pt")
+model = YOLO(model_path)
 
 def process_image(file_bytes):
-    """
-    file_bytes — это байты изображения из запроса
-    Возвращает (путь к изображению с боксами, список найденных объектов)
-    """
-    # Сохраняем временный входной файл
-    temp_input = "temp_input.jpg"
-    with open(temp_input, "wb") as f:
-        f.write(file_bytes)
+    nparr = np.frombuffer(file_bytes, np.uint8)
+    img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
 
-    # Запускаем детекцию
-    results = model(temp_input)
+    results = model(img)
+    annotated_img = results[0].plot()
 
-    # Папка для сохранения результатов
-    output_dir = "runs/detect/exp"
-    os.makedirs(output_dir, exist_ok=True)
+    _, buffer = cv2.imencode('.jpg', annotated_img)
+    img_base64 = base64.b64encode(buffer).decode('utf-8')
 
-    # Сохраняем аннотированное изображение
-    results[0].plot()  # генерируем изображение с бокcами
-    results[0].save(save_dir=output_dir)
-
-    # Копируем аннотированное изображение в корень проекта
-    annotated_img_path = "annotated.jpg"
-    exp_files = os.listdir(output_dir)
-    for f in exp_files:
-        if f.endswith(".jpg") or f.endswith(".png"):
-            shutil.copy(os.path.join(output_dir, f), annotated_img_path)
-            break
-
-    # Собираем найденные объекты
     objects = []
-    for box in results[0].boxes.data.tolist():  # [x1, y1, x2, y2, confidence, class]
+    for box in results[0].boxes.data.tolist():
         objects.append({
             "bbox": box[:4],
             "confidence": float(box[4]),
             "class": model.names[int(box[5])]
         })
 
-    return annotated_img_path, objects
+    return img_base64, objects

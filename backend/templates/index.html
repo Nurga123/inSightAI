@@ -1,44 +1,41 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<title>Indrive AI Backend</title>
-<style>
-  body { font-family: Arial; margin: 30px; }
-  .section { margin-bottom: 20px; }
-  #result { margin-top: 10px; background: #f4f4f4; padding: 10px; }
-</style>
-</head>
-<body>
-<h1>Indrive AI - YOLO Detection</h1>
-
-<div class="section">
-  <h2>Загрузить изображение</h2>
-  <input type="file" id="image_input"/>
-  <button onclick="uploadImage()">Обработать</button>
-  <pre id="result"></pre>
-</div>
+<input type="file" id="image_input" />
+<button onclick="uploadImage()">Обработать</button>
+<div id="result"></div>
+<img
+  id="annotated_img"
+  style="margin-top: 10px; max-width: 500px; display: none"
+/>
 
 <script>
-async function uploadImage() {
-    const input = document.getElementById('image_input');
+  async function uploadImage() {
+    const input = document.getElementById("image_input");
     if (input.files.length === 0) {
-        alert("Выберите изображение!");
-        return;
+      alert("Выберите изображение!");
+      return;
     }
 
     const formData = new FormData();
-    formData.append('image', input.files[0]);
+    formData.append("image", input.files[0]);
 
-    const res = await fetch('/detect', {
-        method: 'POST',
-        body: formData
-    });
-
+    const res = await fetch("/detect", { method: "POST", body: formData });
     const data = await res.json();
-    document.getElementById('result').textContent = JSON.stringify(data.result, null, 2);
-}
-</script>
 
-</body>
-</html>
+    if (data.error) {
+      document.getElementById("result").textContent = data.error;
+      document.getElementById("annotated_img").style.display = "none";
+      return;
+    }
+
+    // Показываем JSON с объектами
+    document.getElementById("result").textContent = JSON.stringify(
+      data.objects,
+      null,
+      2
+    );
+
+    // Показываем аннотированное изображение
+    const img = document.getElementById("annotated_img");
+    img.src = "data:image/jpeg;base64," + data.image_base64;
+    img.style.display = "block";
+  }
+</script>
