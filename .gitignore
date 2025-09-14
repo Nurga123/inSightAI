@@ -1,3 +1,8 @@
-".idea/" 
-# Python virtual environment
-python/venv/
+".idea/"
+<<<<<<< HEAD
+/python/venv/
+=======
+/backend/venv
+/python/venv
+>>>>>>> d433c55a8720a55b3d943a3ef2c43489789297d9
+
