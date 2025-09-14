@@ -1,14 +1,8 @@
 from flask import Blueprint, render_template, request, redirect, session, flash
 from .utils import init_db, create_user, verify_user, get_history
-
 import sqlite3, json
-
-# Инициализируем Blueprint
 login_bp = Blueprint("login", __name__, template_folder="../../frontend")
-
-# Инициализация БД при старте
 init_db()
-
 @login_bp.route("/login", methods=["GET", "POST"])
 def login_page():
     if request.method == "POST":
@@ -17,7 +11,7 @@ def login_page():
         if verify_user(username, password):
             session["username"] = username
             flash("Вы успешно вошли!")
-            return redirect("/dashboard")
+            return redirect("/ai")
         else:
             flash("Неверный логин или пароль.")
     return render_template("login.html")

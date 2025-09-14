@@ -1,23 +1,147 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<title>Регистрация</title>
-</head>
-<body>
-<h1>Регистрация</h1>
-{% with messages = get_flashed_messages() %}
-  {% if messages %}
-    {% for msg in messages %}
-      <p style="color:red;">{{ msg }}</p>
-    {% endfor %}
-  {% endif %}
-{% endwith %}
-<form method="POST">
-    <input type="text" name="username" placeholder="Имя пользователя" required>
-    <input type="password" name="password" placeholder="Пароль" required>
-    <button type="submit">Зарегистрироваться</button>
-</form>
-<p>Уже есть аккаунт? <a href="/login">Войти</a></p>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <title>InSight AI - Registration</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Palanquin+Dark:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background: #f2f2f2;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+      }
+
+      .container {
+        background: #ffffff;
+        padding: 40px;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        width: 360px;
+        text-align: center;
+      }
+
+      .logo {
+        font-size: 26px;
+        font-weight: bold;
+        color: #2c3e94;
+        margin-bottom: 5px;
+        font-family: "Palanquin Dark", sans-serif;
+      }
+
+      .powered {
+        font-size: 12px;
+        color: #555555;
+        margin-bottom: 20px;
+      }
+
+      h1 {
+        margin-bottom: 25px;
+        font-size: 20px;
+        letter-spacing: 1px;
+        color: #2c3e94;
+      }
+
+      input {
+        width: 100%;
+        padding: 12px;
+        margin: 8px 0;
+        border: 1px solid #cccccc;
+        border-radius: 8px;
+        font-size: 14px;
+        background: #fafafa;
+        transition: border-color 0.3s;
+      }
+
+      input:focus {
+        outline: none;
+        border-color: #2c3e94;
+      }
+
+      button {
+        width: 100%;
+        padding: 12px;
+        margin-top: 15px;
+        border: none;
+        background: #2c3e94;
+        color: #fff;
+        font-size: 16px;
+        font-weight: bold;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background 0.3s;
+      }
+
+      button:hover {
+        background: #1f2e6d;
+      }
+
+      .footer {
+        margin-top: 25px;
+        font-size: 13px;
+        color: #333333;
+      }
+
+      .flash {
+        margin: 10px 0;
+        color: red;
+        font-size: 14px;
+      }
+
+      .login-link {
+        display: inline-block;
+        margin-top: 15px;
+        text-decoration: none;
+        font-weight: bold;
+        color: #2c3e94;
+      }
+
+      .login-link:hover {
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="logo palanquin-dark-bold">inSight AI</div>
+      <div class="powered">
+        Powered by Enactus Narxoz – Advanced vehicle condition check
+      </div>
+
+      <h1>REGISTRATION PAGE</h1>
+
+      {% with messages = get_flashed_messages() %} {% if messages %} {% for msg
+      in messages %}
+      <div class="flash">{{ msg }}</div>
+      {% endfor %} {% endif %} {% endwith %}
+
+      <form method="POST">
+        <input
+          type="text"
+          name="username"
+          placeholder="Create login..."
+          required
+        />
+        <input
+          type="password"
+          name="password"
+          placeholder="Create password..."
+          required
+        />
+        <button type="submit">Enter</button>
+      </form>
+
+      <a class="login-link" href="/login">HAVE AN ACCOUNT?</a>
+
+      <div class="footer">inSight AI: Check the condition of the machine</div>
+    </div>
+  </body>
 </html>
