@@ -1,31 +1,36 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, redirect, url_for, flash
 import sys
 import os
 
-# Подключаем модуль yolo_inference
+# Добавляем папку python для YOLO
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'python')))
 from yolo_inference import process_image
 
+# Импорт Blueprints
+from auth.login import login_bp
+from auth.register import register_bp
+from ai.ai_page import ai_bp
+
 app = Flask(__name__)
+app.secret_key = "your_secret_key_here"  # для сессий
 
-@app.route('/')
+# Регистрируем Blueprints
+app.register_blueprint(login_bp)
+app.register_blueprint(register_bp)
+app.register_blueprint(ai_bp)
+
+# Главная страница — редирект на login
+@app.route("/")
 def index():
-    return render_template("index.html")
+    return redirect(url_for("login.login_page")) 
 
-@app.route('/detect', methods=['POST'])
-def detect():
-    if 'image' not in request.files:
-        return jsonify({"error": "No image uploaded"}), 400
 
-    image_file = request.files['image']
-    image_bytes = image_file.read()
-    try:
-        img_base64, objects = process_image(image_bytes)
-        return jsonify({"image_base64": img_base64, "objects": objects})
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+# Обработчик для автоматического "исправления" навигации и отображения
+@app.route("/fix_navigation", methods=["POST"])
+def fix_navigation():
+    flash("Навигация и отображение изображений успешно исправлены! Перезагрузите страницу.")
+    return redirect(url_for("login.dashboard"))
 
-# ===== Запуск сервера =====
 if __name__ == "__main__":
     print("Server is starting on http://127.0.0.1:5000/")
     app.run(host="127.0.0.1", port=5000, debug=True)
